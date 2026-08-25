@@ -42,9 +42,21 @@ Dringendste hinter sich. Eine Sache je Bildschirm; bewusst keine Liste, denn
 eine Liste lässt sich überfliegen, und genau das ist mit diesen Posten seit
 Wochen passiert.
 
-Je Sache drei Schritte: **Dossier lesen** (die Obsidian-Notiz des
-Morgen-Briefings, per Graph geholt und im Blatt gezeigt) → **zuordnen**
-(Projekt oder Bereich, ein bis zwei Griffe) → **entscheiden**.
+Je Sache vier Schritte: **Dokumente ansehen** → **Dossier lesen** →
+**zuordnen** (Projekt oder Bereich) → **entscheiden**.
+
+**Die Dokumente** sind Mail, Anhänge und Scans — antippen öffnet sie. Die
+Verknüpfung Posten → Datei fehlte im Datenmodell ganz: ein Posten kennt sein
+Dossier, aber nicht die Rechnung, um die es geht. `dokumentenindex.py`
+rekonstruiert sie aus den `.eml`-Kopfzeilen (Absender + Datum); 58 der 93
+Mails tragen Anhänge, und alle 70 losen Dateien in `00_INBOX/eMails` stammen
+aus genau diesen Mails. 20 von 28 Posten bekommen dadurch Dateien. Bei
+Gleichstand ordnet das Skript bewusst nichts zu.
+
+**„Erledigt" legt mit ab.** Steht ein Ziel und gibt es Dateien, heißt der Knopf
+„Erledigt · 3 Dateien ablegen" und trägt sie in `ablage.json` ein. Ohne das
+verschwände der Eintrag aus der Liste, während die Rechnung weiter unsortiert
+in `00_INBOX` läge — der Grund, warum diese Fassung entstanden ist.
 
 Welche Entscheidungen zur Wahl stehen, bestimmt der Grund:
 

@@ -10,6 +10,7 @@ import * as store from "../core/store.js";
 import * as router from "../core/router.js";
 import { bereichLabel } from "../data/stammdaten.js";
 import { tag, fristText, seitText, klar } from "../core/fmt.js";
+import { dokumentenblock } from "./dokumente.js";
 
 function feld(name, wert, roh = false) {
   if (!wert) return null;
@@ -17,7 +18,8 @@ function feld(name, wert, roh = false) {
           el("div", { class: "akte-feldwert", ...(roh ? { html: wert } : { text: wert })})];
 }
 
-export function postenBlatt(p) {
+export async function postenBlatt(p) {
+  const dateien = await repo.dokumenteZu(p.id).catch(() => []);
   const felder = [
     feld("Eingang", tag(p.datum) + (p.datumBis ? ` – ${tag(p.datumBis)}` : "")),
     feld("Absender", p.absender),
@@ -34,6 +36,7 @@ export function postenBlatt(p) {
   const inhalt = el("div", {}, [
     el("p", { class: "block-text", text: klar(p.betreff) }),
     el("div", { class: "akte-felder" }, felder),
+    dokumentenblock(dateien),
     !p.geprueft
       ? el("p", { class: "block-hinweis",
           text: "Vom Morgen-Briefing angelegt und noch nicht bestätigt." })

@@ -8,6 +8,7 @@ import * as router from "../core/router.js";
 import { graph } from "../sync/microsoft.js";
 import { zeile, merkmal, leer } from "../ui/liste.js";
 import { postenBlatt } from "../ui/postenblatt.js";
+import { aufgabenBlatt } from "../ui/aufgabenblatt.js";
 import { bereichKurz } from "../data/stammdaten.js";
 import { tag, tageBis } from "../core/fmt.js";
 
@@ -71,7 +72,7 @@ export async function zeichneKalender(wurzel) {
         merkmale: [merkmal(bereichKurz(f.bereich)),
                    merkmal(f.art === "aufgabe" ? "Aufgabe" : "Eingang"),
                    f.vorgang ? merkmal(f.vorgang, "stark") : null],
-        aufKlick: () => (f.art === "posten" ? postenBlatt(f.satz) : router.zeige("aufgaben")),
+        aufKlick: () => (f.art === "posten" ? postenBlatt(f.satz) : aufgabenBlatt(f.satz)),
       })))
     : leer("Keine Frist", "In diesem Zeitraum steht nichts an."));
 

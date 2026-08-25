@@ -18,6 +18,7 @@ const DATEIEN = {
   ausgang:    { datei: "ausgang.json",    liste: "eintraege" },
   stammdaten: { datei: "stammdaten.json", liste: "projekte" },
   ablage:     { datei: "ablage.json",     liste: "zuordnungen" },
+  dokumente:  { datei: "dokumente.json",  liste: "zuordnungen" },
 };
 
 const etags = new Map();

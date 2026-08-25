@@ -10,7 +10,7 @@
 // Grenze: Urteil am Telefon, Dateioperation dort, wo die Quelle liegt.
 import { el, icon, hinweis } from "../core/dom.js";
 import { sheet, schliesse } from "./sheet.js";
-import * as db from "../data/db.js";
+import * as ablegen from "../data/ablegen.js";
 import * as store from "../core/store.js";
 import * as inbox from "../sync/inbox.js";
 import { suche, alleBereiche, bereichLabel, projekt as projektMit } from "../data/stammdaten.js";
@@ -112,7 +112,9 @@ export function zuordnen(datei, beimSpeichern) {
         class: "knopf voll", text: "Zuordnen",
         onclick: async () => {
           if (!gewaehlt) return hinweis("Erst ein Ziel wählen.", "warnung");
-          await merken(datei, gewaehlt, modus === "projekt");
+          await ablegen.merken({ ordner: `00_INBOX/${datei.quelle}`, name: datei.name,
+                                 ziel: gewaehlt, istProjekt: modus === "projekt" });
+          store.geaendert();
           schliesse();
           hinweis("Zugeordnet. Der Mac legt sie beim nächsten Lauf ab.", "gut");
           beimSpeichern?.();
@@ -142,28 +144,4 @@ function vorschau(datei) {
       }),
     ]),
   ]);
-}
-
-async function merken(datei, ziel, istProjekt) {
-  const satz = {
-    id: datei.id,
-    name: datei.name,
-    quelle: `00_INBOX/${datei.quelle}`,
-    zielArt: istProjekt ? "projekt" : "bereich",
-    zielId: ziel.id,
-    zielLabel: istProjekt ? `${ziel.kuerzel || ziel.nr || ""} ${ziel.name}`.trim() : ziel.label,
-    // Projektziele lösen wir erst auf dem Mac auf — dort liegt das NAS, und
-    // nur dort steht fest, wie der Projektordner wirklich heißt.
-    projektNr: istProjekt ? ziel.nr : null,
-    projektName: istProjekt ? ziel.name : null,
-    bereichsPfad: istProjekt ? null : ziel.pfad,
-    zugeordnetAm: new Date().toISOString(),
-    erledigt: false,
-    geaendert: new Date().toISOString(),
-    geloescht: null,
-  };
-  await db.schreiben(db.STORE_ABLAGE, satz);
-  await db.schreiben(db.STORE_OFFEN, { id: `ablage:${satz.id}`, store: db.STORE_ABLAGE,
-                                       satzId: satz.id, am: satz.geaendert });
-  store.geaendert();
 }

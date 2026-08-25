@@ -43,6 +43,7 @@ const LISTEN = [
   ["vorgaenge", db.STORE_VORGAENGE],
   ["ausgang", db.STORE_AUSGANG],
   ["stammdaten", db.STORE_PROJEKTE],
+  ["dokumente", db.STORE_DOKUMENTE],
   ["ablage", db.STORE_ABLAGE],
 ];
 
@@ -62,7 +63,7 @@ export async function abgleichen({ still = false } = {}) {
     for (const [name, store] of LISTEN) {
       try {
         const offen = (await repo.offeneAenderungen()).filter((o) => o.store === store);
-        if (offen.length && name !== "stammdaten") {
+        if (offen.length && !["stammdaten", "dokumente"].includes(name)) {
           const eigene = await db.alle(store);
           const vereint = await cowork.speichern(name, eigene);
           await db.ersetzeAlle(store, vereint);

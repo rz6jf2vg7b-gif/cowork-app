@@ -18,11 +18,24 @@ import * as db from "../data/db.js";
 import * as planner from "../sync/planner.js";
 import * as store from "../core/store.js";
 import * as dossier from "../sync/dossier.js";
+import * as ablegen from "../data/ablegen.js";
+import { dokumentenblock } from "./dokumente.js";
 import { alleBereiche, bereichLabel, suche, projekt as projektMit } from "../data/stammdaten.js";
 import { tag, seitText, fristText, klar } from "../core/fmt.js";
 
 const HEUTE = () => new Date().toISOString().slice(0, 10);
 const inTagen = (n) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
+
+// Wohin ein Bereich ablegt. Diese Ordner liegen echt auf OneDrive — anders
+// als die Projekte, die auf dem NAS wohnen.
+const BEREICHSZIEL = {
+  privat: { id: "pr", label: "Privat", pfad: "02_AREAS/Privat" },
+  joy: { id: "joy", label: "Joy · Familie", pfad: "02_AREAS/Privat/Familie" },
+  sgg: { id: "sgg", label: "SGG T2,6 Mannheim", pfad: "02_AREAS/SGG_T2-6_Mannheim" },
+  kl: { id: "kl", label: "kreativLABOR42 · Büro", pfad: "02_AREAS/kreativLABOR42" },
+  mvv: { id: "mvv", label: "MVV Netze", pfad: "02_AREAS/MVV_Netze" },
+  sidehustle: { id: "si", label: "Sidehustle", pfad: "02_AREAS/PassiveIncome" },
+};
 
 const FRAGE = {
   ungeprueft: "Stimmt der Eintrag?",
@@ -60,10 +73,21 @@ export async function durchlaufStarten(art = "alles") {
   let i = 0;
   let zuordnung = null;          // offene Auswahl: null | "projekt" | "bereich"
   let dossierText = null;
+  let dateien = [];              // Dokumente des aktuellen Postens
   const blatt = sheet({ titel: "Durchlauf", inhalt: el("div") });
 
-  const weiter = () => { i++; zuordnung = null; dossierText = null; zeichne(); };
-  const zurueck = () => { i = Math.max(0, i - 1); zuordnung = null; dossierText = null; zeichne(); };
+  const weiter = () => { i++; ruecksetzen(); zeichne(); };
+  const zurueck = () => { i = Math.max(0, i - 1); ruecksetzen(); zeichne(); };
+  function ruecksetzen() { zuordnung = null; dossierText = null; dateien = []; dateienHolen(); }
+
+  // Dokumente nachladen und nachzeichnen. Sie kommen aus dem lokalen Index,
+  // also schnell — aber asynchron, deshalb nicht im Zeichenlauf selbst.
+  async function dateienHolen() {
+    const p = posten[i];
+    if (!p || p.art === "aufgabe") return;
+    const d = await repo.dokumenteZu(p.satz.id).catch(() => []);
+    if (posten[i] === p) { dateien = d; zeichne(); }
+  }
 
   function zeichne() {
     if (i >= posten.length) {
@@ -95,6 +119,7 @@ export async function durchlaufStarten(art = "alles") {
 
       dossierKnopf(s),
       dossierText ? el("pre", { class: "dossier", text: dossierText }) : null,
+      dokumentenblock(dateien),
 
       zuordnungsblock(p),
       el("div", { class: "durchlauf-wege" }, wege(p)),
@@ -215,7 +240,7 @@ export async function durchlaufStarten(art = "alles") {
     }
     if (p.grund === "ueberfaellig") {
       return [
-        k("Erledigt", "voll", "erledigt"),
+        k(erledigtText(p), "voll", "erledigt"),
         hatFrist ? k("Neue Frist: in einer Woche", "", "verschieben") : null,
         k("Später ansehen", "", null),
       ].filter(Boolean);
@@ -223,15 +248,50 @@ export async function durchlaufStarten(art = "alles") {
     // Altlast: das Entscheidende ist der Unterschied zwischen „lebt noch"
     // und „ist tot". Die Uhr zurückzusetzen ist eine eigene Antwort.
     return [
-      k("Erledigt", "voll", "erledigt"),
+      k(erledigtText(p), "voll", "erledigt"),
       k("Lebt noch — Uhr zurücksetzen", "", "angefasst"),
       k("Weg damit", "", "verwerfen"),
       k("Später ansehen", "", null),
     ];
   }
 
+  /** "Erledigt" heißt nur dann wirklich erledigt, wenn die Dokumente auch
+   *  abgelegt werden. Sonst verschwindet der Eintrag aus der Liste, während
+   *  die Rechnung weiter unsortiert in 00_INBOX liegt — genau die Kritik,
+   *  die den Umbau ausgelöst hat. */
+  function erledigtText(p) {
+    const ziel = zielVon(p);
+    if (was_ablegbar(p, ziel)) {
+      const n = dateien.length;
+      return `Erledigt · ${n} ${n === 1 ? "Datei" : "Dateien"} ablegen`;
+    }
+    return "Erledigt";
+  }
+
+  const was_ablegbar = (p, ziel) => p.art !== "aufgabe" && dateien.length > 0 && !!ziel;
+
+  function zielVon(p) {
+    const s = p.satz;
+    if (s.projektId) {
+      const pr = projektMit(s.projektId);
+      if (pr) return { ziel: pr, istProjekt: true };
+    }
+    if (s.bereich) {
+      const b = BEREICHSZIEL[s.bereich];
+      if (b) return { ziel: b, istProjekt: false };
+    }
+    return null;
+  }
+
   async function tun(p, was) {
     try {
+      if (was === "erledigt") {
+        const z = zielVon(p);
+        if (was_ablegbar(p, z)) {
+          await ablegen.merkeAlle(dateien, z.ziel, z.istProjekt);
+          hinweis(`${dateien.length} zur Ablage vorgemerkt.`, "gut");
+        }
+      }
       if (p.art === "aufgabe") await aufgabe(p.satz, was);
       else {
         const store_ = p.art === "vorgang" ? db.STORE_VORGAENGE : db.STORE_POSTEN;
@@ -283,5 +343,6 @@ export async function durchlaufStarten(art = "alles") {
     ].filter(([, w]) => w);
   }
 
+  ruecksetzen();
   zeichne();
 }

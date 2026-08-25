@@ -6,19 +6,20 @@
 // der Normalfall — und dort will Steffen nachsehen, was offen ist.
 
 const NAME = "cowork";
-const VERSION = 2;   // v2: Ablage-Speicher dazugekommen
+const VERSION = 3;   // v2: Ablage · v3: Dokumentenindex
 
 export const STORE_POSTEN = "posten";        // Eingangsposten
 export const STORE_VORGAENGE = "vorgaenge";  // Akten mit Chronologie
 export const STORE_AUSGANG = "ausgang";
 export const STORE_AUFGABEN = "aufgaben";    // Planner-Abzug, nur zwischengespeichert
 export const STORE_PROJEKTE = "projekte";    // Stammdaten-Abzug
+export const STORE_DOKUMENTE = "dokumente"; // Posten -> Dateien in 00_INBOX
 export const STORE_ABLAGE = "ablage";      // Zuordnungen, die der Mac ausführt
 export const STORE_KONFIG = "konfig";
 export const STORE_OFFEN = "offen";          // noch nicht übertragene Änderungen
 
 const ALLE = [STORE_POSTEN, STORE_VORGAENGE, STORE_AUSGANG, STORE_AUFGABEN,
-              STORE_PROJEKTE, STORE_ABLAGE, STORE_KONFIG, STORE_OFFEN];
+              STORE_PROJEKTE, STORE_DOKUMENTE, STORE_ABLAGE, STORE_KONFIG, STORE_OFFEN];
 
 let dbPromise = null;
 
@@ -30,7 +31,8 @@ export function oeffnen() {
       const db = req.result;
       for (const s of ALLE) {
         if (db.objectStoreNames.contains(s)) continue;
-        const store = db.createObjectStore(s, { keyPath: s === STORE_KONFIG ? "key" : "id" });
+        const schluessel = s === STORE_KONFIG ? "key" : s === STORE_DOKUMENTE ? "postenId" : "id";
+        const store = db.createObjectStore(s, { keyPath: schluessel });
         if (s === STORE_POSTEN) { store.createIndex("frist", "frist"); store.createIndex("status", "status"); }
         if (s === STORE_AUFGABEN) store.createIndex("faellig", "faellig");
       }

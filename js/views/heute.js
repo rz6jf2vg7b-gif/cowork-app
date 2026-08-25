@@ -9,6 +9,7 @@ import * as store from "../core/store.js";
 import { zeile, merkmal, abschnitt, leer } from "../ui/liste.js";
 import { durchlaufStarten } from "../ui/durchlauf.js";
 import { postenBlatt } from "../ui/postenblatt.js";
+import { aufgabenBlatt } from "../ui/aufgabenblatt.js";
 import { tag, tageBis, klar, seitText } from "../core/fmt.js";
 import { bereichKurz } from "../data/stammdaten.js";
 
@@ -96,7 +97,9 @@ function fristZeile(f) {
       f.vorgang ? merkmal(f.vorgang, "stark") : null,
       merkmal(f.art === "aufgabe" ? "Aufgabe" : "Eingang"),
     ],
-    aufKlick: () => (f.art === "aufgabe" ? router.zeige("aufgaben") : postenBlatt(f.satz)),
+    // Nicht in die Aufgabenliste springen: das riss den Zusammenhang ab und
+    // setzte einen an den Listenanfang. Das Blatt zeigt die Sache selbst.
+    aufKlick: () => (f.art === "aufgabe" ? aufgabenBlatt(f.satz) : postenBlatt(f.satz)),
   });
 }
 

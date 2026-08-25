@@ -786,3 +786,25 @@ textarea.feld { resize: vertical; min-height: 46px; line-height: 1.45; }
 .zuordnung-wert { font-size: 13px; font-weight: 600; }
 .zuordnung .karten { max-height: 32vh; overflow-y: auto; }
 .zuordnung .suchzeile { margin: var(--a2) 0; }
+
+/* ===== Dokumente ======================================================= */
+
+.dokumente { margin: var(--a4) 0 0; }
+.dokument {
+  display: flex; align-items: center; gap: var(--a3); width: 100%; text-align: left;
+  padding: var(--a2) 0; border-bottom: var(--haar) solid var(--linie);
+}
+.dokument:active { background: var(--flaeche-2); }
+.dokument-typ {
+  flex: none; width: 40px; font-size: 9.5px; font-weight: 700;
+  letter-spacing: var(--sperrung); color: var(--text-3);
+  border: var(--haar) solid var(--linie); border-radius: var(--r-s);
+  padding: 2px 0; text-align: center;
+}
+.dokument-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.dokument-name {
+  font-size: 13px; font-weight: 550; line-height: 1.3;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.dokument-pfeil { flex: none; color: var(--text-3); display: grid; place-items: center; }
+.dokument-pfeil svg { fill: none; stroke: currentColor; stroke-width: 1.6; }

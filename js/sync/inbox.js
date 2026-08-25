@@ -60,6 +60,16 @@ export async function adresse(id) {
   return d?.["@microsoft.graph.downloadUrl"] || null;
 }
 
+/** Öffnen-Adresse über Ordner und Dateiname statt über die Graph-Kennung.
+ *  Der Dokumentenindex kennt nur Pfade — er entsteht auf dem Mac, wo es
+ *  keine Graph-IDs gibt. */
+export async function adresseNachPfad(ordner, name) {
+  const pfad = `/me/drive/root:/${ordner}/${encodeURIComponent(name)}`;
+  const d = await graph(`${pfad}?$select=id,@microsoft.graph.downloadUrl`);
+  if (d?._nichtGefunden) return null;
+  return d?.["@microsoft.graph.downloadUrl"] || null;
+}
+
 export const lesbar = (b) =>
   b >= 1048576 ? `${(b / 1048576).toFixed(1)} MB`
   : b >= 1024 ? `${Math.round(b / 1024)} KB` : `${b} B`;

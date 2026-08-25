@@ -11,6 +11,14 @@ export const vorgaenge = async () => (await db.alle(db.STORE_VORGAENGE)).filter(
 export const ausgang = async () => (await db.alle(db.STORE_AUSGANG)).filter(lebend);
 export const aufgaben = async () => db.alle(db.STORE_AUFGABEN);
 export const projekte = async () => db.alle(db.STORE_PROJEKTE);
+/** Die Dateien zu einem Posten. Erzeugt von dokumentenindex.py auf dem Mac:
+ *  im Datenmodell fehlt die Verknüpfung, sie wird über die .eml-Kopfzeilen
+ *  rekonstruiert (Absender + Datum). 20 von 28 Posten haben dadurch Dateien. */
+export async function dokumenteZu(postenId) {
+  const e = await db.holen(db.STORE_DOKUMENTE, postenId);
+  return e?.dateien || [];
+}
+
 export const ablage = async () => (await db.alle(db.STORE_ABLAGE)).filter(lebend);
 /** Zugeordnet, aber vom Mac noch nicht ausgeführt. */
 export const ablageOffen = async () => (await ablage()).filter((z) => !z.erledigt);
