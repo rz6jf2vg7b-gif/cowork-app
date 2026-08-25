@@ -144,7 +144,7 @@ export function abmelden() {
 
 /** Ein Graph-Aufruf mit gültigem Token. Wirft mit lesbarem Text statt
  *  nacktem Statuscode — die Meldung landet direkt in der Oberfläche. */
-export async function graph(pfad, { methode = "GET", koerper = null, kopf = {} } = {}) {
+export async function graph(pfad, { methode = "GET", koerper = null, kopf = {}, roh = false } = {}) {
   const token = await gueltigerToken();
   const res = await fetch(pfad.startsWith("http") ? pfad : GRAPH + pfad, {
     method: methode,
@@ -158,7 +158,12 @@ export async function graph(pfad, { methode = "GET", koerper = null, kopf = {} }
   if (res.status === 204) return null;
   if (res.status === 404) return { _nichtGefunden: true };
   const text = await res.text();
-  const daten = text ? JSON.parse(text) : null;
+  // roh=true fuer Dateiinhalte, die kein JSON sind (Markdown-Notizen).
+  // Ohne diesen Weg wirft JSON.parse bei jeder Textdatei.
+  if (roh && res.ok) return text;
+  let daten = null;
+  try { daten = text ? JSON.parse(text) : null; }
+  catch { if (res.ok) return text; }
   if (!res.ok) {
     const meldung = daten?.error?.message || `Graph antwortete ${res.status}`;
     throw new Error(meldung);

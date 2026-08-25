@@ -759,3 +759,30 @@ textarea.feld { resize: vertical; min-height: 46px; line-height: 1.45; }
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .zuordnen .karten { max-height: 40vh; overflow-y: auto; }
+
+/* ===== Durchlauf, zweite Fassung ======================================= */
+
+.durchlauf-kopf { display: flex; align-items: baseline; justify-content: space-between; gap: var(--a3); }
+
+/* Das Dossier: der Text der Obsidian-Notiz. Feste Breite, eigener Rollbereich —
+   manche sind lang, und der Rest des Blattes soll stehen bleiben. */
+.dossier {
+  margin: var(--a3) 0 0; padding: var(--a3);
+  max-height: 34vh; overflow-y: auto;
+  background: var(--flaeche-2); border: var(--haar) solid var(--linie);
+  font-family: var(--schrift); font-size: 12.5px; line-height: 1.55;
+  white-space: pre-wrap; word-break: break-word; color: var(--text-2);
+}
+
+/* Zuordnung — bewusst zwischen Sachverhalt und Entscheidung. Sie ist kein
+   Abschluss, sondern das Aufräumen nebenbei: kein Posten trug bisher ein
+   Projekt, hier lässt es sich mit einem Griff nachholen. */
+.zuordnung {
+  margin: var(--a4) 0 0; padding: var(--a3) 0;
+  border-top: var(--haar) solid var(--linie);
+  border-bottom: var(--haar) solid var(--linie);
+}
+.zuordnung-stand { display: flex; align-items: baseline; gap: var(--a3); margin-bottom: var(--a2); }
+.zuordnung-wert { font-size: 13px; font-weight: 600; }
+.zuordnung .karten { max-height: 32vh; overflow-y: auto; }
+.zuordnung .suchzeile { margin: var(--a2) 0; }

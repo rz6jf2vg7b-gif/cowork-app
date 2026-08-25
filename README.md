@@ -36,11 +36,42 @@ sondern **Durchlauf**.
 | **Fristen** | Monatsraster über alle drei Quellen, optional als Outlook-Termin |
 | **Mehr** | Verbindung, abgeschlossene Vorgänge, Datenstand, Sprungziele |
 
-**Durchlauf** (Mittelknopf) führt in einem Zug durch alles, was hängt:
-ungeprüfte ⚙️-Posten bestätigen oder verwerfen → gerissene Fristen → Altlasten
-über 30 Tage. Eine Sache je Bildschirm, fünf Wege hinaus. Bewusst keine Liste:
+**Durchlauf** führt in einem Zug durch alles, was hängt — gerissene Fristen
+zuerst, dann Ungeprüftes, dann Altlasten über 30 Tage. Wer abbricht, hat das
+Dringendste hinter sich. Eine Sache je Bildschirm; bewusst keine Liste, denn
 eine Liste lässt sich überfliegen, und genau das ist mit diesen Posten seit
 Wochen passiert.
+
+Je Sache drei Schritte: **Dossier lesen** (die Obsidian-Notiz des
+Morgen-Briefings, per Graph geholt und im Blatt gezeigt) → **zuordnen**
+(Projekt oder Bereich, ein bis zwei Griffe) → **entscheiden**.
+
+Welche Entscheidungen zur Wahl stehen, bestimmt der Grund:
+
+| Grund | Frage | Wege |
+|---|---|---|
+| ungeprüft | Stimmt der Eintrag? | Stimmt so · Weg damit · Später ansehen |
+| überfällig | Frist ist gerissen — was gilt? | Erledigt · Neue Frist · Später ansehen |
+| Altlast | Liegt seit Wochen — was gilt? | Erledigt · Lebt noch (Uhr zurücksetzen) · Weg damit · Später |
+
+Die erste Fassung hatte **fünf feste Knöpfe für drei verschiedene Fragen**, und
+das ging schief: „Wartet weiter" und „Überspringen" riefen exakt dieselbe
+Funktion, „Frist auf nächste Woche" erfand Termine bei Posten ohne Frist, und
+bei Planner-Aufgaben war „Verwerfen" identisch mit „Erledigt". Die
+Beschriftungen nennen jetzt die Wirkung, nicht die Absicht — und es gibt
+„Zurück".
+
+**Warum die Zuordnung mitten im Durchlauf sitzt:** Kein einziger Eingangsposten
+trug bisher ein Projekt (`projektId` war überall leer). Hier liegt die Sache
+ohnehin gerade vor — es ist der billigste Moment, es nachzuholen. Wird ein
+Projekt gewählt, gewinnt dessen Bereich: ein Projekt zu nennen ist die genauere
+Aussage als ein Bereich, der oft nur geschätzt war.
+
+**Warum das Dossier und nicht die Mail:** Von 23 Posten haben 18 eine
+Obsidian-Notiz, aber nur 2 eine gleichnamige `.eml` — die Namen sind
+auseinandergelaufen. Und `obsidian://`-Deeplinks funktionieren auf Steffens
+Geräten nicht (geprüft 01.08.2026). Also wird der Text geholt und in der App
+gezeigt.
 
 **Scans — der Eingangskorb.** Was du mit dem iPhone einscannst, landet in
 OneDrive unter `00_INBOX/Scans`; der Morgen-Briefing-Monitor legt Mailanhänge
