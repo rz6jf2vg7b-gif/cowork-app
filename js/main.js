@@ -46,14 +46,18 @@ for (const a of ANSICHTEN) {
   });
 }
 
+// Der Durchlauf-Knopf sass in der Mitte der Leiste und kostete dort einen
+// Reiter — ausgerechnet "Vorgaenge", also die Akte, die den Kern des Systems
+// bildet. Auf dem Telefon steht jetzt die Akte in der Leiste und der Durchlauf
+// als grosser Knopf auf "Heute", wo er ohnehin schon war. Auf breiten Schirmen
+// ist in der Seitenleiste Platz fuer beides.
 const navKnoepfe = new Map();
-ANSICHTEN.forEach((a, i) => {
-  if (i === 3) {
-    navLeiste.appendChild(el("button", {
-      class: "nav-erfassen", "aria-label": "Durchlauf starten",
-      onclick: () => durchlaufStarten("alles"),
-    }, [icon("durchlauf", 22), el("span", { class: "nur-breit", text: "Durchlauf" })]));
-  }
+navLeiste.appendChild(el("button", {
+  class: "nav-erfassen nur-breit-flex", "aria-label": "Durchlauf starten",
+  onclick: () => durchlaufStarten("alles"),
+}, [icon("durchlauf", 22), el("span", { class: "nur-breit", text: "Durchlauf" })]));
+
+ANSICHTEN.forEach((a) => {
   const knopf = el("button", {
     class: "nav-knopf", dataset: { ansicht: a.id },
     onclick: () => router.zeige(a.id),

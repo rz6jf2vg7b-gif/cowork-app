@@ -32,7 +32,7 @@ sondern **Durchlauf**.
 | **Heute** | Lage in vier Kacheln (überfällig · heute fällig · ungeprüft ⚙️ · Altlast > 30 T), dann überfällige Fristen und „Bei anderen" |
 | **Post** | Eingang · Ausgang · Alle. Suche, Filter (offen / mit Frist / überfällig / ungeprüft), Bereichsauswahl |
 | **Vorgänge** | Die Akten. Detail als Zeitstrahl, neueste Einträge zuerst, „Nächster Schritt" oben |
-| **Aufgaben** | Microsoft Planner, live. Abhaken schreibt sofort zurück |
+| **Aufgaben** | Microsoft Planner, live. Nach Projekt gruppiert oder nach Frist. Abhaken schreibt sofort zurück |
 | **Fristen** | Monatsraster über alle drei Quellen, optional als Outlook-Termin |
 | **Mehr** | Verbindung, abgeschlossene Vorgänge, Datenstand, Sprungziele |
 
@@ -48,9 +48,25 @@ elf Tage lang als überfällig liefen, obwohl längst geantwortet war — sichtb
 das nur, wenn beide Richtungen nebeneinander stehen. Ein versendeter Brief mit
 Status *Antwort offen* landet deshalb auch in der Nachfassliste auf *Heute*.
 
-Auf dem Telefon zeigt die Leiste vier Reiter — nur so sitzt der Durchlauf-Knopf
-mittig. Vorgänge und Fristen sind dort über *Heute* und *Mehr* erreichbar; ab
-768 px erscheinen alle sechs in einer Seitenleiste.
+Auf dem Telefon zeigt die Leiste **fünf** Reiter und keinen Mittelknopf; der
+Durchlauf steht dort als großer Knopf auf *Heute*. Die erste Fassung opferte
+für den Mittelknopf ausgerechnet *Vorgänge* — die Akte war damit nur über
+Umwege erreichbar, obwohl sie den Kern des Systems bildet. *Fristen* bleibt
+mobil ausgeblendet und ist über die Kachel auf *Heute* erreichbar; ab 768 px
+zeigt die Seitenleiste alle sechs plus den Durchlauf.
+
+**Gruppierung nach Projekt** gibt es bei den Aufgaben, nicht im Eingang. Von
+33 Aufgaben tragen 21 ihr Projekt als Präfix im Titel („QGW: …"), zehn davon
+dasselbe — gruppiert werden aus 33 Zeilen sieben Gruppen. Aufgelöst wird gegen
+den echten Katalog: 222 Projekte tragen ein Kürzel, `QGW` → 1909, `OFS` → 2019.
+Bei Mehrdeutigkeit entscheidet `f_29` (Projekt aktiv): „Theodor-Heuss-Schule"
+trifft 1701 (Bau B, laufend) und 2010 (Bau C, abgeschlossen).
+
+**Im Eingang bewusst nicht.** Posten tragen kein Projekt-Präfix; wirft man
+Betreff und Absender in denselben Auflöser, treffen dreibuchstabige Kürzel
+zufällig — der MVV-Posten „Schnitte UW Roche" landete bei „UW Sprendlingen",
+der E.ON-Abschlag bei „Haushalt". Der einzige verlässliche Schlüssel wäre der
+Vorgang, den aber nur 5 von 23 Posten tragen.
 
 ---
 

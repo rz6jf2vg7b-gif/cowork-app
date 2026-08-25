@@ -9,7 +9,7 @@ import * as store from "../core/store.js";
 import { zeile, merkmal, abschnitt, leer } from "../ui/liste.js";
 import { durchlaufStarten } from "../ui/durchlauf.js";
 import { postenBlatt } from "../ui/postenblatt.js";
-import { tag, tageBis, klar } from "../core/fmt.js";
+import { tag, tageBis, klar, seitText } from "../core/fmt.js";
 import { bereichKurz } from "../data/stammdaten.js";
 
 export async function zeichneHeute(wurzel) {
@@ -56,7 +56,7 @@ export async function zeichneHeute(wurzel) {
         datum: null,
         name: g.wer,
         neben: `${g.eintraege.length} ${g.eintraege.length === 1 ? "Sache" : "Sachen"}`,
-        seit: g.eintraege[0]?.seit,
+        seit: seitText(g.eintraege[0]?.seit),
         merkmale: [g.aeltester >= 30 ? merkmal(`${g.aeltester} Tage`, "stark") : null],
         aufKlick: () => router.zeige("post", { mit: { wartetAuf: g.wer } }),
       }))));
@@ -71,16 +71,15 @@ export async function zeichneHeute(wurzel) {
 }
 
 function fristZeile(f) {
-  const t = tageBis(f.datum);
   return zeile({
     datum: f.datum,
     name: klar(f.titel),
     neben: klar(f.neben),
+    ungeprueft: f.satz?.geprueft === false,
     merkmale: [
       merkmal(bereichKurz(f.bereich)),
       f.vorgang ? merkmal(f.vorgang, "stark") : null,
       merkmal(f.art === "aufgabe" ? "Aufgabe" : "Eingang"),
-      t < -14 ? merkmal(`${-t} Tage`, "voll") : null,
     ],
     aufKlick: () => (f.art === "aufgabe" ? router.zeige("aufgaben") : postenBlatt(f.satz)),
   });

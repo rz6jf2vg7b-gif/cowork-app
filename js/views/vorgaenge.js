@@ -43,7 +43,7 @@ export async function zeichneVorgaenge(wurzel, parameter) {
       datum: null,
       name: v.titel,
       neben: klar((v.naechsterSchritt || v.projekt || "").split("\n")[0]),
-      seit: letzte,
+      seit: seitText(letzte),
       merkmale: [
         merkmal(v.id, "stark"),
         merkmal(bereichKurz(v.bereich)),

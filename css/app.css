@@ -449,13 +449,16 @@ textarea.feld { resize: vertical; min-height: 46px; line-height: 1.45; }
 
 /* ===== Posten, Vorgänge, Aufgaben ====================================== */
 
-/* Eine Zeile trägt vier Dinge: Dringlichkeit (links), Sache (Mitte),
-   Zustand (rechts) und Herkunft (darunter). Alles monochrom — Dringlichkeit
-   zeigt sich über Schriftgewicht und eine Randmarke, nie über Farbe. */
+/* Eine Zeile trägt drei Dinge: Zeit (links), Sache (Mitte), Zustand (rechts).
+   Alles monochrom — Dringlichkeit zeigt sich über Schriftgewicht und eine
+   Randmarke, nie über Farbe.
+
+   Zielhöhe ~62 px. Die erste Fassung brauchte 105 und zeigte damit sieben
+   Zeilen je iPhone-Bildschirm; für 33 Aufgaben waren das fünf Bildschirme. */
 .zeile {
   display: flex; gap: var(--a3); align-items: flex-start;
   width: 100%; text-align: left;
-  padding: var(--a3) 0 var(--a3) var(--a3);
+  padding: var(--a2) 0 var(--a2) var(--a3);
   border-bottom: var(--haar) solid var(--linie);
   border-left: 2px solid transparent;
 }
@@ -463,48 +466,80 @@ textarea.feld { resize: vertical; min-height: 46px; line-height: 1.45; }
 .zeile.ueberfaellig { border-left-color: var(--linie-tinte); }
 .zeile.heute { border-left-color: var(--linie-stark); }
 .zeile.erledigt { opacity: .45; }
+.zeile.eingerueckt { padding-left: var(--a6); }
 
-.zeile-datum {
-  flex: none; width: 52px;
-  font-family: var(--zahlen); font-size: 11px; line-height: 1.35;
-  color: var(--text-3); padding-top: 2px;
+.zeile-zeit {
+  flex: none; width: 46px; padding-top: 2px;
+  font-family: var(--zahlen); font-size: 11px; line-height: 1.4;
+  color: var(--text-3); text-align: right;
 }
-.zeile.ueberfaellig .zeile-datum { color: var(--text); font-weight: 700; }
+.zeile-zeit.ueberfaellig { color: var(--text); font-weight: 700; }
+.zeile-zeit.heute { color: var(--text); font-weight: 600; }
 
-.zeile-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.zeile-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+
+/* Höchstens zwei Zeilen. Einzeilig war zu knapp: bei 375 px bleiben dem Titel
+   rund 250 px, und "QGW: Rechnungen Kaciu · Schindler · Stuppy prüfen" brach
+   mitten im Inhalt ab. Kurze Titel bleiben bei 42 px Zeilenhöhe, lange wachsen
+   auf rund 61 — immer noch deutlich unter den 105 der ersten Fassung. */
 .zeile-name {
-  font-size: 14.5px; font-weight: 550; letter-spacing: -.01em; line-height: 1.35;
-  overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  font-size: 14px; font-weight: 550; letter-spacing: -.01em; line-height: 1.35;
+  overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 .zeile.ueberfaellig .zeile-name { font-weight: 680; }
-.zeile-neben {
-  font-size: 11.5px; color: var(--text-2); line-height: 1.4;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+
+/* Das Prüfzeichen steht an 81 % der Aufgaben. Als schwarzer Block war es das
+   Auffälligste der ganzen Liste, obwohl es das Gewöhnlichste ist. */
+.zeile-fahne { color: var(--text-3); margin-right: 5px; font-size: 11px; }
+
+/* Herkunft und Merkmale teilen sich eine Zeile statt zwei */
+.zeile-fuss {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--text-2); line-height: 1.3;
+  overflow: hidden;
 }
-.zeile-fuss { display: flex; flex-wrap: wrap; gap: var(--a2); margin-top: 3px; }
+.zeile-neben { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%; }
 
-.zeile-rechts { flex: none; display: flex; align-items: center; gap: var(--a2); padding-top: 1px; }
-
-/* Ein Merkmal einer Zeile: Bereich, Vorgang, Anzahl. Kein farbiger Chip,
-   sondern eine Beschriftung in Kleinversalien — wie eine Planbeschriftung. */
 .merkmal {
-  font-size: 9.5px; font-weight: 700; letter-spacing: var(--sperrung);
+  font-size: 9px; font-weight: 700; letter-spacing: var(--sperrung);
   text-transform: uppercase; color: var(--text-3);
-  border: var(--haar) solid var(--linie); padding: 1px 5px; border-radius: var(--r-s);
+  border: var(--haar) solid var(--linie); padding: 0 4px; border-radius: var(--r-s);
   white-space: nowrap;
 }
-.merkmal.stark { color: var(--text); border-color: var(--linie-tinte); }
+.merkmal.stark { color: var(--text); border-color: var(--linie-stark); }
 .merkmal.voll { background: var(--tinte); color: var(--tinte-kontrast); border-color: var(--tinte); }
 
-/* Abhak-Feld — sitzt rechts, damit der Daumen die Zeile nicht verdeckt */
 .haken-knopf {
-  flex: none; width: 26px; height: 26px;
+  flex: none; width: 24px; height: 24px; margin-top: 1px;
   border: var(--haar) solid var(--linie-stark); border-radius: var(--r-s);
   display: grid; place-items: center; color: transparent;
 }
-.haken-knopf svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.haken-knopf svg { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .haken-knopf:active { background: var(--flaeche-3); }
 .haken-knopf.an { background: var(--tinte); border-color: var(--tinte); color: var(--tinte-kontrast); }
+
+/* ===== Gruppen ========================================================= */
+
+/* Aufklappbar, damit zehn QGW-Aufgaben eine Zeile sind statt zehn. */
+.gruppe { border-bottom: var(--haar) solid var(--linie); }
+.gruppe-kopf {
+  display: flex; align-items: baseline; gap: var(--a2);
+  width: 100%; text-align: left; padding: var(--a3) 0;
+}
+.gruppe-kopf:active { background: var(--flaeche-2); }
+.gruppe-pfeil { flex: none; width: 12px; color: var(--text-3); font-size: 10px; }
+.gruppe-label {
+  flex: 1; min-width: 0; font-size: 13px; font-weight: 650; letter-spacing: -.01em;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.gruppe-kopf.offen .gruppe-label { color: var(--text); }
+.gruppe-zahlen {
+  flex: none; font-size: 10.5px; font-weight: 600; letter-spacing: var(--sperrung);
+  text-transform: uppercase; color: var(--text-3);
+}
+.gruppe .karten { padding-bottom: var(--a2); }
+.gruppe .zeile:last-child { border-bottom: none; }
 
 /* ===== Kennzahlen-Kacheln auf Heute ==================================== */
 
@@ -565,14 +600,17 @@ textarea.feld { resize: vertical; min-height: 46px; line-height: 1.45; }
    Mittelknopf seine Beschriftung auch auf dem Telefon und schiebt sich
    ueber die Nachbarreiter. */
 .nur-breit { display: none; }
+.nur-breit-flex { display: flex; }
 
-/* Sechs Reiter plus Mittelknopf passen nicht auf 375 px. Auf dem Telefon
-   bleiben vier — zwei links, zwei rechts —, nur so sitzt der Knopf wirklich
-   mittig. Vorgaenge und Fristen sind dort ueber "Heute" und "Mehr"
-   erreichbar; auf dem iPad zeigt die Seitenleiste wieder alle sechs. */
+/* Auf dem Telefon fuenf Reiter und kein Mittelknopf. Die erste Fassung
+   opferte dafuer "Vorgaenge" — die Akte war damit nur ueber Umwege
+   erreichbar, obwohl sie den Kern des Systems bildet. Der Durchlauf steht
+   stattdessen als grosser Knopf auf "Heute"; auf breiten Schirmen hat die
+   Seitenleiste Platz fuer beides. "Fristen" bleibt mobil ausgeblendet und
+   ist ueber die Kachel auf "Heute" und ueber "Mehr" erreichbar. */
 @media (max-width: 767px) {
-  .nav-knopf[data-ansicht="vorgaenge"],
   .nav-knopf[data-ansicht="kalender"] { display: none; }
+  .nur-breit-flex { display: none !important; }
 }
 
 /* ===== Leerzustände ==================================================== */

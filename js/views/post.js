@@ -12,7 +12,7 @@ import * as router from "../core/router.js";
 import { zeile, merkmal, leer } from "../ui/liste.js";
 import { postenBlatt } from "../ui/postenblatt.js";
 import { bereichKurz, alleBereiche } from "../data/stammdaten.js";
-import { tageBis, klar } from "../core/fmt.js";
+import { tageBis, klar, seitText } from "../core/fmt.js";
 
 const RICHTUNGEN = [
   { id: "ein", label: "Eingang" },
@@ -29,6 +29,13 @@ const FILTER = [
 ];
 
 let richtung = "ein";
+// Bewusst KEINE Gruppierung nach Projekt wie bei den Aufgaben. Posten tragen
+// kein Projekt-Präfix im Betreff; wirft man Betreff und Absender in den
+// Auflöser, treffen dreibuchstabige Kürzel zufällig — der MVV-Posten "Schnitte
+// UW Roche" landete bei "UW Sprendlingen", der E.ON-Abschlag bei "Haushalt".
+// Der einzige verlässliche Schlüssel wäre der Vorgang, den aber nur 5 von 23
+// Posten tragen. Bei 23 Posten und 42 px Zeilenhöhe sind das zwei Bildschirme
+// — die Bereichs-Chips genügen als Ordnung.
 let filter = "offen";
 let bereichsfilter = null;
 let suchtext = "";
@@ -113,8 +120,10 @@ export async function zeichnePost(wurzel, parameter) {
     return;
   }
 
-  anhaengen(wurzel, el("div", { class: "karten" },
-    richtung === "ein" ? sortiertEin(ein).map(eingangsZeile) : sortiertAus(aus).map(ausgangsZeile)));
+  if (richtung === "aus") {
+    return void anhaengen(wurzel, el("div", { class: "karten" }, sortiertAus(aus).map(ausgangsZeile)));
+  }
+  anhaengen(wurzel, el("div", { class: "karten" }, sortiertEin(ein).map((p) => eingangsZeile(p))));
 }
 
 function kopfzeile(parameter, ein, aus, posten, ausgang) {
@@ -138,15 +147,17 @@ function eingangsZeile(p) {
     datum: p.frist || p.datum,
     name: klar(p.betreff),
     neben: p.absender,
-    seit: !p.frist && p.wartetSeit ? p.wartetSeit : null,
+    seit: !p.frist && p.wartetSeit ? seitText(p.wartetSeit) : null,
     erledigt: ["erledigt", "abgeschlossen"].includes(p.status),
+    ungeprueft: !p.geprueft,
     merkmale: [
-      merkmal("Ein"),
+      richtung === "alle" ? merkmal("Ein") : null,
       merkmal(p.bereich ? bereichKurz(p.bereich) : "?"),
       p.typ ? merkmal(p.typ) : null,
       p.vorgang ? merkmal(p.vorgang, "stark") : null,
       p.anzahlMails > 1 ? merkmal(`${p.anzahlMails} Mails`) : null,
-      !p.geprueft ? merkmal("⚙️ ungeprüft", "voll") : null,
+      // Steffen selbst ist kein Nachfassziel — als Merkmal stünde er an fast
+      // jeder Zeile und wäre reines Rauschen.
       p.wartetAuf && !repo.istIch(p.wartetAuf) ? merkmal(klar(p.wartetAuf).slice(0, 18)) : null,
     ],
     aufKlick: () => postenBlatt(p),
@@ -160,7 +171,7 @@ function ausgangsZeile(e) {
     name: klar(e.betreff) || "(ohne Betreff)",
     neben: e.empfaenger,
     merkmale: [
-      merkmal("Aus", "stark"),
+      richtung === "alle" ? merkmal("Aus", "stark") : null,
       merkmal(e.bereich ? bereichKurz(e.bereich) : "?"),
       e.typ ? merkmal(e.typ) : null,
       e.vorgang ? merkmal(e.vorgang, "stark") : null,
