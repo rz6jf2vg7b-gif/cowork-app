@@ -11,6 +11,9 @@ export const vorgaenge = async () => (await db.alle(db.STORE_VORGAENGE)).filter(
 export const ausgang = async () => (await db.alle(db.STORE_AUSGANG)).filter(lebend);
 export const aufgaben = async () => db.alle(db.STORE_AUFGABEN);
 export const projekte = async () => db.alle(db.STORE_PROJEKTE);
+export const ablage = async () => (await db.alle(db.STORE_ABLAGE)).filter(lebend);
+/** Zugeordnet, aber vom Mac noch nicht ausgeführt. */
+export const ablageOffen = async () => (await ablage()).filter((z) => !z.erledigt);
 
 export const offenePosten = async () => (await posten()).filter(offen);
 export const offeneVorgaenge = async () => (await vorgaenge()).filter(offen);

@@ -30,7 +30,7 @@ sondern **Durchlauf**.
 | Reiter | Was er zeigt |
 |---|---|
 | **Heute** | Lage in vier Kacheln (überfällig · heute fällig · ungeprüft ⚙️ · Altlast > 30 T), dann überfällige Fristen und „Bei anderen" |
-| **Post** | Eingang · Ausgang · Alle. Suche, Filter (offen / mit Frist / überfällig / ungeprüft), Bereichsauswahl |
+| **Post** | Scans · Eingang · Ausgang · Alle. Suche, Filter (offen / mit Frist / überfällig / ungeprüft), Bereichsauswahl |
 | **Vorgänge** | Die Akten. Detail als Zeitstrahl, neueste Einträge zuerst, „Nächster Schritt" oben |
 | **Aufgaben** | Microsoft Planner, live. Nach Projekt gruppiert oder nach Frist. Abhaken schreibt sofort zurück |
 | **Fristen** | Monatsraster über alle drei Quellen, optional als Outlook-Termin |
@@ -41,6 +41,34 @@ ungeprüfte ⚙️-Posten bestätigen oder verwerfen → gerissene Fristen → A
 über 30 Tage. Eine Sache je Bildschirm, fünf Wege hinaus. Bewusst keine Liste:
 eine Liste lässt sich überfliegen, und genau das ist mit diesen Posten seit
 Wochen passiert.
+
+**Scans — der Eingangskorb.** Was du mit dem iPhone einscannst, landet in
+OneDrive unter `00_INBOX/Scans`; der Morgen-Briefing-Monitor legt Mailanhänge
+unter `00_INBOX/eMails` ab. Beides war bisher unsichtbar — und die 70 Anhänge
+hatten überhaupt keinen Weg hinaus: der Monitor legt sie ab, nichts holt sie
+wieder heraus. Die Ansicht listet sie mit Vorschau; antippen öffnet die
+Zuordnung (Projekt oder Bereich).
+
+**Die App verschiebt die Datei nicht selbst.** Die 100 Projektordner auf
+OneDrive sind Arbeitskopien, die `projekt_rucksync.py` einmalig vom NAS
+befüllt hat — den Weg zurück gibt es nicht. Eine dort abgelegte Datei läge in
+einer Kopie, die niemand mehr beachtet. Stattdessen wird die Entscheidung in
+`CoWork_OS/data/ablage.json` notiert, und auf dem Mac führt sie aus:
+
+```bash
+python3 ~/Library/CloudStorage/OneDrive-kreativLABOR42/CoWork_OS/00_resources/scripts/ablage_ausfuehren.py
+python3 ~/.../ablage_ausfuehren.py --ausfuehren
+```
+
+Ohne Schalter ist es ein Prüflauf. Kopiert wird über eine SHA-256-Prüfung, die
+Quelle fällt erst danach weg, und überschrieben wird nie — gleichnamige Dateien
+werden nummeriert.
+
+**Kein Fach im Projekt.** Die Struktur aus `projektstruktur.md` v2.4 existiert
+nur in der untermStrich-Vorlage: von 174 Projekten auf dem NAS haben 75
+überhaupt ein `01_SCH`, und darunter liegen `01_Beteiligte / 02_Post / 03_Doku`
+statt `01_IN/IN`. Ein festes Fach wäre bei zwei Dritteln falsch. Die App legt
+deshalb nur fest, **welches Projekt** — die Datei landet in dessen `00_INBOX`.
 
 **Warum Ein- und Ausgang in einer Ansicht:** SKILL 06 heißt „Eingang & Ausgang",
 und der Ausgang ist dort gleichrangig. Am 02.08.2026 kam heraus, dass zwei Posten

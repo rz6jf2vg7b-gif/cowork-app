@@ -43,6 +43,7 @@ const LISTEN = [
   ["vorgaenge", db.STORE_VORGAENGE],
   ["ausgang", db.STORE_AUSGANG],
   ["stammdaten", db.STORE_PROJEKTE],
+  ["ablage", db.STORE_ABLAGE],
 ];
 
 /** Ein Durchgang: OneDrive lesen, offene eigene Änderungen hochschieben,

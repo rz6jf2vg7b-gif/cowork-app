@@ -48,7 +48,14 @@ export function suche(text, { bereich: b = null, limit = 40 } = {}) {
   let basis = projekte;
   if (b) basis = basis.filter((p) => p.bereich === b);
   if (!worte.length) {
-    return basis.filter((p) => p.aktiv).slice(0, limit);
+    // Ohne Suchbegriff nach Bereich sortieren, kreativLABOR42 zuerst. Ungefiltert
+    // dominieren die 617 MVV-Projekte die 161 des Büros — und ein Scan gehört
+    // fast immer zu einem Büroprojekt.
+    const rang = new Map(bereiche.map((b, i) => [b.id, b.reihung ?? i]));
+    return basis.filter((p) => p.aktiv)
+      .sort((a, b) => (rang.get(a.bereich) ?? 99) - (rang.get(b.bereich) ?? 99)
+        || String(b.nr || "").localeCompare(String(a.nr || "")))
+      .slice(0, limit);
   }
   const treffer = [];
   for (const p of basis) {

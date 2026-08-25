@@ -6,15 +6,20 @@
 // wird das nur, wenn beide Richtungen nebeneinander stehen. Als Abschnitt unter
 // „Mehr" wäre der Ausgang genau das geblieben, was er vorher war: ein Anhang,
 // in den niemand schaut.
-import { el, icon, anhaengen } from "../core/dom.js";
+import { el, icon, anhaengen, hinweis } from "../core/dom.js";
 import * as repo from "../data/repo.js";
+import * as inbox from "../sync/inbox.js";
+import { zuordnen } from "../ui/zuordnen.js";
 import * as router from "../core/router.js";
-import { zeile, merkmal, leer } from "../ui/liste.js";
+import { zeile, merkmal, abschnitt, leer } from "../ui/liste.js";
 import { postenBlatt } from "../ui/postenblatt.js";
 import { bereichKurz, alleBereiche } from "../data/stammdaten.js";
 import { tageBis, klar, seitText } from "../core/fmt.js";
 
 const RICHTUNGEN = [
+  // "Scans" steht vorn, weil es der einzige Zustand ist, in dem noch etwas zu
+  // entscheiden ist. Eingang und Ausgang sind bereits erfasst.
+  { id: "scans", label: "Scans" },
   { id: "ein", label: "Eingang" },
   { id: "aus", label: "Ausgang" },
   { id: "alle", label: "Alle" },
@@ -40,9 +45,17 @@ let filter = "offen";
 let bereichsfilter = null;
 let suchtext = "";
 
+// Der Eingangskorb wird bei jedem Öffnen frisch von OneDrive geholt statt in
+// IndexedDB gespiegelt: er ändert sich durch Scannen am Telefon, nicht durch
+// die App. Ein zwischengespeicherter Stand wäre sofort veraltet.
+let korb = null;
+let korbLaeuft = false;
+
 export async function zeichnePost(wurzel, parameter) {
   if (parameter?.richtung) richtung = parameter.richtung;
   if (parameter?.wartetAuf) { richtung = "ein"; filter = "offen"; suchtext = ""; }
+
+  if (richtung === "scans") return zeichneScans(wurzel);
 
   const [posten, ausgang] = await Promise.all([repo.posten(), repo.ausgang()]);
   const w = suchtext.toLowerCase();
@@ -124,6 +137,69 @@ export async function zeichnePost(wurzel, parameter) {
     return void anhaengen(wurzel, el("div", { class: "karten" }, sortiertAus(aus).map(ausgangsZeile)));
   }
   anhaengen(wurzel, el("div", { class: "karten" }, sortiertEin(ein).map((p) => eingangsZeile(p))));
+}
+
+async function zeichneScans(wurzel) {
+  const zugeordnet = new Map((await repo.ablage()).map((z) => [z.id, z]));
+
+  wurzel.appendChild(el("header", { class: "kopfzeile" }, [
+    el("h1", { text: "Post" }),
+    el("p", { class: "kopf-neben",
+      text: korb === null ? "Eingangskorb wird geholt …"
+          : `${korb.filter((d) => !zugeordnet.has(d.id)).length} von ${korb.length} noch ohne Ziel` }),
+  ]));
+
+  wurzel.appendChild(el("div", { class: "segment" }, RICHTUNGEN.map((r) => el("button", {
+    class: `segment-knopf${r.id === richtung ? " aktiv" : ""}`,
+    onclick: () => { richtung = r.id; neu(wurzel); },
+    text: r.label,
+  }))));
+
+  if (korb === null) {
+    if (!korbLaeuft) {
+      korbLaeuft = true;
+      inbox.dateien()
+        .then((d) => { korb = d; })
+        .catch((e) => { korb = []; hinweis(`Eingangskorb: ${e.message}`, "warnung"); })
+        .finally(() => { korbLaeuft = false; router.neuZeichnen(); });
+    }
+    return void wurzel.appendChild(leer("Einen Moment",
+      "Der Eingangskorb wird von OneDrive geholt."));
+  }
+
+  if (!korb.length) {
+    return void wurzel.appendChild(leer("Der Eingangskorb ist leer",
+      "Gescannte Post landet in OneDrive unter 00_INBOX/Scans, "
+      + "Anhänge aus dem Morgen-Briefing unter 00_INBOX/eMails."));
+  }
+
+  wurzel.appendChild(el("button", {
+    class: "text-knopf", style: { margin: "var(--a3) 0" }, text: "Neu holen",
+    onclick: () => { korb = null; neu(wurzel); },
+  }));
+
+  const offen = korb.filter((d) => !zugeordnet.has(d.id));
+  const fertig = korb.filter((d) => zugeordnet.has(d.id));
+
+  anhaengen(wurzel, abschnitt("Ohne Ziel", `${offen.length}`,
+    offen.map((d) => korbZeile(d, null, wurzel))));
+  anhaengen(wurzel, abschnitt("Zugeordnet — wartet auf den Mac", `${fertig.length}`,
+    fertig.map((d) => korbZeile(d, zugeordnet.get(d.id), wurzel))));
+}
+
+function korbZeile(d, ziel, wurzel) {
+  return zeile({
+    datum: d.geaendert,
+    name: d.name,
+    neben: `${d.quelle} · ${inbox.lesbar(d.groesse)}`,
+    erledigt: !!ziel,
+    merkmale: [
+      merkmal(d.endung.toUpperCase()),
+      merkmal(d.art === "scan" ? "Scan" : "Anhang"),
+      ziel ? merkmal(ziel.zielLabel.slice(0, 24), "stark") : null,
+    ],
+    aufKlick: () => zuordnen(d, () => neu(wurzel)),
+  });
 }
 
 function kopfzeile(parameter, ein, aus, posten, ausgang) {

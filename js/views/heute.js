@@ -38,6 +38,21 @@ export async function zeichneHeute(wurzel) {
     kachel(alt.length, "Altlast > 30 T", () => durchlaufStarten("altlast")),
   ]));
 
+  // Zugeordnetes, das der Mac noch nicht abgelegt hat. Ohne diesen Hinweis
+  // wüsste niemand, dass die Entscheidung getroffen, aber nicht ausgeführt ist.
+  const wartend = await repo.ablageOffen();
+  if (wartend.length) {
+    wurzel.appendChild(el("button", {
+      class: "karte block", onclick: () => router.zeige("post", { mit: { richtung: "scans" } }),
+    }, [
+      el("div", { class: "block-kopf" }, [
+        el("h2", { text: `${wartend.length} ${wartend.length === 1 ? "Datei" : "Dateien"} zugeordnet` }),
+      ]),
+      el("p", { class: "block-neben",
+        text: "Wartet auf den nächsten Ablage-Lauf am Mac." }),
+    ]));
+  }
+
   // ---- Durchlauf ---------------------------------------------------------
   if (unge.length || alt.length || ueber.length) {
     wurzel.appendChild(el("button", {

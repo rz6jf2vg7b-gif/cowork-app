@@ -6,18 +6,19 @@
 // der Normalfall — und dort will Steffen nachsehen, was offen ist.
 
 const NAME = "cowork";
-const VERSION = 1;
+const VERSION = 2;   // v2: Ablage-Speicher dazugekommen
 
 export const STORE_POSTEN = "posten";        // Eingangsposten
 export const STORE_VORGAENGE = "vorgaenge";  // Akten mit Chronologie
 export const STORE_AUSGANG = "ausgang";
 export const STORE_AUFGABEN = "aufgaben";    // Planner-Abzug, nur zwischengespeichert
 export const STORE_PROJEKTE = "projekte";    // Stammdaten-Abzug
+export const STORE_ABLAGE = "ablage";      // Zuordnungen, die der Mac ausführt
 export const STORE_KONFIG = "konfig";
 export const STORE_OFFEN = "offen";          // noch nicht übertragene Änderungen
 
-const ALLE = [STORE_POSTEN, STORE_VORGAENGE, STORE_AUSGANG,
-              STORE_AUFGABEN, STORE_PROJEKTE, STORE_KONFIG, STORE_OFFEN];
+const ALLE = [STORE_POSTEN, STORE_VORGAENGE, STORE_AUSGANG, STORE_AUFGABEN,
+              STORE_PROJEKTE, STORE_ABLAGE, STORE_KONFIG, STORE_OFFEN];
 
 let dbPromise = null;
 
