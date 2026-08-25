@@ -30,17 +30,23 @@ sondern **Durchlauf**.
 | Reiter | Was er zeigt |
 |---|---|
 | **Heute** | Lage in vier Kacheln (überfällig · heute fällig · ungeprüft ⚙️ · Altlast > 30 T), dann überfällige Fristen und „Bei anderen" |
-| **Eingang** | Alle Posten mit Suche, Filter (offen / mit Frist / überfällig / ungeprüft) und Bereichsauswahl |
+| **Post** | Eingang · Ausgang · Alle. Suche, Filter (offen / mit Frist / überfällig / ungeprüft), Bereichsauswahl |
 | **Vorgänge** | Die Akten. Detail als Zeitstrahl, neueste Einträge zuerst, „Nächster Schritt" oben |
 | **Aufgaben** | Microsoft Planner, live. Abhaken schreibt sofort zurück |
 | **Fristen** | Monatsraster über alle drei Quellen, optional als Outlook-Termin |
-| **Mehr** | Verbindung, Ausgang, abgeschlossene Vorgänge, Datenstand |
+| **Mehr** | Verbindung, abgeschlossene Vorgänge, Datenstand, Sprungziele |
 
 **Durchlauf** (Mittelknopf) führt in einem Zug durch alles, was hängt:
 ungeprüfte ⚙️-Posten bestätigen oder verwerfen → gerissene Fristen → Altlasten
 über 30 Tage. Eine Sache je Bildschirm, fünf Wege hinaus. Bewusst keine Liste:
 eine Liste lässt sich überfliegen, und genau das ist mit diesen Posten seit
 Wochen passiert.
+
+**Warum Ein- und Ausgang in einer Ansicht:** SKILL 06 heißt „Eingang & Ausgang",
+und der Ausgang ist dort gleichrangig. Am 02.08.2026 kam heraus, dass zwei Posten
+elf Tage lang als überfällig liefen, obwohl längst geantwortet war — sichtbar wird
+das nur, wenn beide Richtungen nebeneinander stehen. Ein versendeter Brief mit
+Status *Antwort offen* landet deshalb auch in der Nachfassliste auf *Heute*.
 
 Auf dem Telefon zeigt die Leiste vier Reiter — nur so sitzt der Durchlauf-Knopf
 mittig. Vorgänge und Fristen sind dort über *Heute* und *Mehr* erreichbar; ab

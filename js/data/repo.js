@@ -88,6 +88,14 @@ export async function wartetAuf({ ohneMich = true } = {}) {
     if (p.wartetAuf) zufuegen(p.wartetAuf, { art: "posten", satz: p, titel: p.betreff,
                                              seit: p.wartetSeit || p.datum });
   }
+  // Ein versendeter Brief ohne Antwort ist der klarste Fall von "liegt bei
+  // jemand anderem" — er stand bisher nur im Ausgang und tauchte in keiner
+  // Nachfassliste auf. Genau daran ist der Kellermann-Vorgang hängen geblieben.
+  for (const e of await ausgang()) {
+    if (!/Antwort offen/i.test(e.status || "")) continue;
+    zufuegen(e.empfaenger, { art: "ausgang", satz: e, titel: e.betreff,
+                             seit: e.datumBis || e.datum });
+  }
   for (const v of await offeneVorgaenge()) {
     if (!v.wartetAuf) continue;
     // "Wartet auf" führt bei Vorgängen mehrere Beteiligte, getrennt durch ·

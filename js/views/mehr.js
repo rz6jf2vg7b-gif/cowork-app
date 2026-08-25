@@ -26,9 +26,10 @@ export async function zeichneMehr(wurzel) {
   wurzel.appendChild(el("div", { class: "chipzeile" }, [
     ["vorgaenge", `Vorgänge (${vorgaenge.filter((v) => !["abgeschlossen", "erledigt"].includes(v.status)).length})`],
     ["kalender", "Fristen"],
-    ["eingang", "Eingang"],
+    ["post", `Ausgang (${ausgang.length})`],
   ].map(([ziel, text]) => el("button", {
-    class: "chip", text, onclick: () => router.zeige(ziel),
+    class: "chip", text,
+    onclick: () => router.zeige(ziel, ziel === "post" ? { mit: { richtung: "aus" } } : {}),
   }))));
 
   // ---- Verbindung --------------------------------------------------------
@@ -55,18 +56,6 @@ export async function zeichneMehr(wurzel) {
       }) : null,
     ].filter(Boolean)),
   ]));
-
-  // ---- Ausgang -----------------------------------------------------------
-  wurzel.appendChild(el("div", { class: "abschnitt-titel" }, [
-    el("h2", { text: "Ausgang" }),
-    el("span", { class: "marke", text: `${ausgang.length}` }),
-  ]));
-  const jung = [...ausgang].sort((a, b) => (b.datum || "").localeCompare(a.datum || "")).slice(0, 12);
-  wurzel.appendChild(el("div", { class: "karten" }, jung.map((e) => zeile({
-    datum: e.datum, name: e.betreff || "(ohne Betreff)", neben: e.empfaenger,
-    merkmale: [e.typ ? merkmal(e.typ) : null, e.vorgang ? merkmal(e.vorgang, "stark") : null,
-               /Antwort offen/i.test(e.status || "") ? merkmal("Antwort offen", "voll") : null],
-  }))));
 
   // ---- Abgeschlossene Vorgänge ------------------------------------------
   wurzel.appendChild(el("div", { class: "abschnitt-titel" }, [

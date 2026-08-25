@@ -9,7 +9,7 @@ import * as microsoft from "./sync/microsoft.js";
 import * as auto from "./sync/auto.js";
 import { durchlaufStarten } from "./ui/durchlauf.js";
 import { zeichneHeute } from "./views/heute.js";
-import { zeichneEingang } from "./views/eingang.js";
+import { zeichnePost } from "./views/post.js";
 import { zeichneVorgaenge } from "./views/vorgaenge.js";
 import { zeichneAufgaben } from "./views/aufgaben.js";
 import { zeichneKalender } from "./views/kalender.js";
@@ -17,7 +17,7 @@ import { zeichneMehr } from "./views/mehr.js";
 
 const ANSICHTEN = [
   { id: "heute", label: "Heute", icon: "heute", zeichnen: zeichneHeute },
-  { id: "eingang", label: "Eingang", icon: "eingang", zeichnen: zeichneEingang },
+  { id: "post", label: "Post", icon: "eingang", zeichnen: zeichnePost },
   { id: "vorgaenge", label: "Vorgänge", icon: "vorgaenge", zeichnen: zeichneVorgaenge },
   { id: "aufgaben", label: "Aufgaben", icon: "aufgaben", zeichnen: zeichneAufgaben },
   { id: "kalender", label: "Fristen", icon: "kalender", zeichnen: zeichneKalender },

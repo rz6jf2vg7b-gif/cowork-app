@@ -58,7 +58,7 @@ export async function zeichneHeute(wurzel) {
         neben: `${g.eintraege.length} ${g.eintraege.length === 1 ? "Sache" : "Sachen"}`,
         seit: g.eintraege[0]?.seit,
         merkmale: [g.aeltester >= 30 ? merkmal(`${g.aeltester} Tage`, "stark") : null],
-        aufKlick: () => router.zeige("eingang", { mit: { wartetAuf: g.wer } }),
+        aufKlick: () => router.zeige("post", { mit: { wartetAuf: g.wer } }),
       }))));
   }
 
