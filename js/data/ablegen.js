@@ -24,6 +24,10 @@ export function eintrag({ ordner, name, ziel, istProjekt }) {
     projektName: istProjekt ? ziel.name : null,
     bereichsPfad: istProjekt ? null : ziel.pfad,
     zugeordnetAm: jetzt,
+    // Was in der App entsteht, hat Steffen selbst gewählt — also bestätigt.
+    // Der Morgen-Briefing-Task schreibt dagegen bestaetigt:false, und
+    // ablage_ausfuehren.py vollzieht nur Bestätigtes.
+    bestaetigt: true,
     erledigt: false,
     geaendert: jetzt,
     geloescht: null,

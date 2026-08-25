@@ -11,6 +11,7 @@
 import { el, icon, hinweis } from "../core/dom.js";
 import { sheet, schliesse } from "./sheet.js";
 import * as ablegen from "../data/ablegen.js";
+import * as repo from "../data/repo.js";
 import * as store from "../core/store.js";
 import * as inbox from "../sync/inbox.js";
 import { suche, alleBereiche, bereichLabel, projekt as projektMit } from "../data/stammdaten.js";
@@ -36,7 +37,7 @@ const BEREICHSZIELE = [
 // zwei Dritteln der Projekte falsch. Die App legt deshalb nur fest, WELCHES
 // Projekt; die Datei landet in dessen "00_INBOX" und wird dort feinsortiert.
 
-export function zuordnen(datei, beimSpeichern) {
+export function zuordnen(datei, beimSpeichern, vorschlag = null) {
   let modus = "projekt";
   let treffer = [];
   let gewaehlt = null;
@@ -108,6 +109,19 @@ export function zuordnen(datei, beimSpeichern) {
     titel: datei.name,
     inhalt: koerper,
     aktionen: [
+      // Ein Vorschlag des Morgen-Briefings lässt sich mit einem Griff
+      // übernehmen — ohne ihn nachzubauen. Ändern geht darunter weiter.
+      vorschlag?.bestaetigt === false
+        ? el("button", { class: "knopf voll",
+            text: `Vorschlag übernehmen: ${vorschlag.zielLabel}`,
+            onclick: async () => {
+              await repo.ablageBestaetigen(vorschlag);
+              schliesse();
+              hinweis("Bestätigt. Der Mac legt sie beim nächsten Lauf ab.", "gut");
+              store.geaendert();
+              beimSpeichern?.();
+            } })
+        : null,
       el("button", {
         class: "knopf voll", text: "Zuordnen",
         onclick: async () => {

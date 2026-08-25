@@ -178,27 +178,34 @@ async function zeichneScans(wurzel) {
     onclick: () => { korb = null; neu(wurzel); },
   }));
 
-  const offen = korb.filter((d) => !zugeordnet.has(d.id));
-  const fertig = korb.filter((d) => zugeordnet.has(d.id));
+  const ziel = (d) => zugeordnet.get(d.id) || zugeordnet.get(`00_INBOX/${d.quelle}/${d.name}`);
+  const offen = korb.filter((d) => !ziel(d));
+  const vorschlag = korb.filter((d) => ziel(d)?.bestaetigt === false);
+  const fertig = korb.filter((d) => ziel(d) && ziel(d).bestaetigt !== false);
 
+  // Vorschläge zuerst: sie warten auf eine Entscheidung, alles andere nicht.
+  anhaengen(wurzel, abschnitt("Vorschlag — bitte bestätigen", `${vorschlag.length}`,
+    vorschlag.map((d) => korbZeile(d, ziel(d), wurzel))));
   anhaengen(wurzel, abschnitt("Ohne Ziel", `${offen.length}`,
     offen.map((d) => korbZeile(d, null, wurzel))));
-  anhaengen(wurzel, abschnitt("Zugeordnet — wartet auf den Mac", `${fertig.length}`,
-    fertig.map((d) => korbZeile(d, zugeordnet.get(d.id), wurzel))));
+  anhaengen(wurzel, abschnitt("Bestätigt — wartet auf den Mac", `${fertig.length}`,
+    fertig.map((d) => korbZeile(d, ziel(d), wurzel))));
 }
 
 function korbZeile(d, ziel, wurzel) {
+  const vorschlag = ziel?.bestaetigt === false;
   return zeile({
     datum: d.geaendert,
     name: d.name,
-    neben: `${d.quelle} · ${inbox.lesbar(d.groesse)}`,
-    erledigt: !!ziel,
+    neben: vorschlag && ziel.grund ? ziel.grund : `${d.quelle} · ${inbox.lesbar(d.groesse)}`,
+    erledigt: !!ziel && !vorschlag,
+    ungeprueft: vorschlag,
     merkmale: [
       merkmal(d.endung.toUpperCase()),
-      merkmal(d.art === "scan" ? "Scan" : "Anhang"),
-      ziel ? merkmal(ziel.zielLabel.slice(0, 24), "stark") : null,
+      ziel ? merkmal(ziel.zielLabel.slice(0, 24), vorschlag ? "voll" : "stark") : null,
+      vorschlag && ziel.sicherheit ? merkmal(ziel.sicherheit) : null,
     ],
-    aufKlick: () => zuordnen(d, () => neu(wurzel)),
+    aufKlick: () => zuordnen(d, () => neu(wurzel), ziel),
   });
 }
 

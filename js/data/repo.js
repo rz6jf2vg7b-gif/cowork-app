@@ -23,6 +23,18 @@ export const ablage = async () => (await db.alle(db.STORE_ABLAGE)).filter(lebend
 /** Zugeordnet, aber vom Mac noch nicht ausgeführt. */
 export const ablageOffen = async () => (await ablage()).filter((z) => !z.erledigt);
 
+/** Vom Morgen-Briefing vorgeschlagen, von Steffen noch nicht bestätigt.
+ *  ablage_ausfuehren.py vollzieht nur Bestätigtes — ohne diese Trennung
+ *  würde ein Vorschlag ungefragt ausgeführt. */
+export const ablageVorschlaege = async () =>
+  (await ablageOffen()).filter((z) => z.bestaetigt === false);
+export const ablageBestaetigt = async () =>
+  (await ablageOffen()).filter((z) => z.bestaetigt !== false);
+
+export async function ablageBestaetigen(satz) {
+  return aendern(db.STORE_ABLAGE, satz, { bestaetigt: true });
+}
+
 export const offenePosten = async () => (await posten()).filter(offen);
 export const offeneVorgaenge = async () => (await vorgaenge()).filter(offen);
 
